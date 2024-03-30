@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "@mtproto/core": "^6.3.0",
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "node-telegram-bot-api": "^0.65.1",
+    "prompts": "^2.4.2",
+    "redis": "^4.6.13",
+    "telegraf": "^4.16.3",
+    "telegram": "^2.20.2"
+  }
+}
