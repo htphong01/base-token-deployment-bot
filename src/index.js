@@ -7,7 +7,7 @@ const { bot } = require("./services/telegram");
 const { sendMessage } = require("./utils/telegram");
 const { createClient } = require("redis");
 
-const client = await createClient();
+const client = createClient();
 
 const api_id = process.env.TELEGRAM_APP_ID; // insert api_id here
 const api_hash = process.env.TELEGRAM_APP_HASH; // insert api_hash here
