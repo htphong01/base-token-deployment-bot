@@ -5,6 +5,9 @@ const prompts = require("prompts");
 const path = require("path");
 const { bot } = require("./services/telegram");
 const { sendMessage } = require("./utils/telegram");
+const { createClient } = require("redis");
+
+const client = await createClient();
 
 const api_id = process.env.TELEGRAM_APP_ID; // insert api_id here
 const api_hash = process.env.TELEGRAM_APP_HASH; // insert api_hash here
@@ -48,9 +51,11 @@ const mtproto = new MTProto({
   },
 });
 
-function startListener() {
+async function startListener() {
+  client.on("error", (err) => console.log("Redis Client Error", err));
+  await client.connect();
   console.log("[+] starting listener");
-  mtproto.updates.on("updates", ({ updates }) => {
+  mtproto.updates.on("updates", async ({ updates }) => {
     const newChannelMessages = updates
       .filter((update) => {
         if (update.message && update.message.peer_id)
@@ -64,7 +69,19 @@ function startListener() {
         const countRugged0 = (message.message.match(/Rugged: 0/g) || []).length;
         if (countRugged === countRugged0) {
           console.log("message", message.message.split("Token Socials")[0]);
-          sendMessage(message.message.split("Token Socials")[0]);
+          const contractAddress = message.message
+            .split("Token Details:")[0]
+            .split("🔖")[1]
+            .replaceAll("\n", "")
+            .trim();
+          const isExisted = await client.get(contractAddress);
+          if (!isExisted) {
+            sendMessage(message.message.split("Token Socials")[0]);
+            await client.set(contractAddress, "true", {
+              EX: 60 * 60 * 24,
+              NX: true,
+            });
+          }
         }
       }
     }
