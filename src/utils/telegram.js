@@ -1,11 +1,14 @@
 require("dotenv").config();
 const axios = require("axios");
 
+const httpClient = axios.create();
+httpClient.defaults.timeout = 10000;
+
 const BASE_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_API_KEY}`;
 
 const sendMessage = async (text) => {
   const URL = `${BASE_URL}/sendMessage`;
-  await axios.get(URL, {
+  await httpClient.get(URL, {
     params: { chat_id: process.env.TELEGRAM_CHAT_ID, text },
   });
 };
