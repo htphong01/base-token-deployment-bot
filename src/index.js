@@ -48,28 +48,34 @@ const mtproto = new MTProto({
 });
 
 function startListener() {
-  console.log("[+] starting listener");
-  mtproto.updates.on("updates", ({ updates }) => {
-    const newChannelMessages = updates
-      .filter((update) => {
-        if (update.message && update.message.peer_id)
-          return update.message.peer_id.channel_id == 1872658362;
-        return false;
-      })
-      .map(({ message }) => message);
-    for (const message of newChannelMessages) {
-      if (message.message.includes("✅ Renounced")) {
-        const countRugged = (message.message.match(/Rugged/g) || []).length;
-        const countRugged0 = (message.message.match(/Rugged: 0/g) || []).length;
-        if (countRugged === countRugged0) {
-          bot.sendMessage(
-            process.env.TELEGRAM_CHAT_ID,
-            message.message.split("Token Socials")[0]
-          );
+  try {
+    console.log("[+] starting listener");
+    mtproto.updates.on("updates", ({ updates }) => {
+      const newChannelMessages = updates
+        .filter((update) => {
+          if (update.message && update.message.peer_id)
+            return update.message.peer_id.channel_id == 1872658362;
+          return false;
+        })
+        .map(({ message }) => message);
+      for (const message of newChannelMessages) {
+        if (message.message.includes("✅ Renounced")) {
+          const countRugged = (message.message.match(/Rugged/g) || []).length;
+          const countRugged0 = (message.message.match(/Rugged: 0/g) || [])
+            .length;
+          if (countRugged === countRugged0) {
+            bot.sendMessage(
+              process.env.TELEGRAM_CHAT_ID,
+              message.message.split("Token Socials")[0]
+            );
+          }
         }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.log('ERROR', error)
+    startListener();
+  }
 }
 
 // checking authentication status
